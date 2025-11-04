@@ -1,0 +1,62 @@
+<html>
+<body>
+<head>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<img id="gift" src="gift.png" alt="Gift Box">
+<img id="surprise" src="surprise.png" alt="Surprise" style="display:none; margin-top:20px;">
+
+<script>
+const gift = document.getElementById("gift");
+const surprise = document.getElementById("surprise");
+
+// Step state
+let step = 0;
+
+// Define hotspots for Group 16 image
+const group16Hotspots = [
+  {x:50, y:50, width:80, height:80, action:()=>alert('Clicked section 1!')},
+  {x:150, y:80, width:60, height:60, action:()=>alert('Clicked section 2!')}
+];
+
+// Start with gift click
+gift.addEventListener("click", () => {
+  gift.style.display = "none";
+  surprise.src = "surprise.png";
+  surprise.style.display = "block";
+  step = 1;
+});
+
+// Surprise image click
+surprise.addEventListener("click", (e) => {
+  if (step === 1) {
+    // Move to Group 16 image
+    surprise.src = "Group 16.png"; 
+    step = 2;
+    addGroup16ClickListeners();
+  }
+});
+
+function addGroup16ClickListeners() {
+  // Remove previous listeners
+  const newSurprise = surprise.cloneNode(true);
+  surprise.parentNode.replaceChild(newSurprise, surprise);
+
+  newSurprise.addEventListener("click", (e) => {
+    const rect = newSurprise.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    for (let hs of group16Hotspots) {
+      if (clickX >= hs.x && clickX <= hs.x + hs.width &&
+          clickY >= hs.y && clickY <= hs.y + hs.height) {
+        hs.action();
+        return;
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
